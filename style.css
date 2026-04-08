@@ -256,3 +256,95 @@ body, html {
     font-weight: 600;
     color: var(--text-primary);
 }
+
+/* ===== Desktop Icons ===== */
+#desktop-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-content: flex-start;
+}
+
+.desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+.desktop-icon:hover {
+    transform: scale(1.05);
+}
+
+.icon-img {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    margin-bottom: 0.5rem;
+}
+
+.icon-label {
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ===== OS Window ===== */
+.os-window {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 500px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.window-header {
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    /* We'll add cursor: move in the dragging stage! */
+}
+
+.window-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-close { background-color: #ff5f56; }
+.btn-min { background-color: #ffbd2e; }
+.btn-max { background-color: #27c93f; }
+
+.window-content {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 1rem;
+    overflow-y: auto;
+}
