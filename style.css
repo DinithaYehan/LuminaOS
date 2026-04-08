@@ -188,3 +188,71 @@ body, html {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(43, 108, 176, 0.6);
 }
+
+/* ===== Main Desktop Environment ===== */
+#desktop {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 1s ease;
+}
+
+#desktop.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#desktop-grid {
+    flex-grow: 1;
+    padding: 2rem;
+    position: relative;
+    /* Grid system will go here for icons */
+}
+
+/* ===== Taskbar ===== */
+#taskbar {
+    height: 56px;
+    margin: 12px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    z-index: 9000;
+}
+
+.glass-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.glass-icon:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.taskbar-apps {
+    flex-grow: 1;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1.5rem;
+}
+
+.taskbar-status {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.95rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+}
