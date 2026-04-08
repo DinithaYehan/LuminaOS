@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuminaOS | WebOS</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
+    
     <!-- Dynamic Background -->
     <div class="dynamic-background">
         <div class="blob shape-1"></div>
@@ -34,8 +30,7 @@
     <!-- Login Screen -->
     <div id="login-screen" class="overlay hidden">
         <div class="glass-panel login-panel">
-            <img class="avatar" src="https://ui-avatars.com/api/?name=Admin&background=random&size=100"
-                alt="User Avatar">
+            <img class="avatar" src="https://ui-avatars.com/api/?name=Admin&background=random&size=100" alt="User Avatar">
             <h2 style="color: var(--text-primary); margin-bottom: 0.5rem;">Guest User</h2>
             <p class="login-subtext">Welcome to LuminaOS</p>
             <button id="login-btn" class="primary-btn">Enter Workspace</button>
@@ -45,37 +40,29 @@
     <!-- Main Desktop Environment -->
     <div id="desktop" class="hidden">
         <div id="desktop-grid">
-            <div class="desktop-icon" onclick="windowManager.crateWindow('Terminal', 'app-terminal')">
+            <div class="desktop-icon" onclick="WindowManager.createWindow('Terminal', 'app-terminal')">
                 <div class="icon-img glass-panel">💻</div>
                 <span class="icon-label">Terminal</span>
             </div>
         </div>
-    </div>
 
-    <div id="taskbar" class="glass-panel">
-        <div class="start-btn glass-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-        </div>
+        <div id="taskbar" class="glass-panel">
+            <div class="start-btn glass-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            </div>
+            
+            <div class="taskbar-apps">
+                
+            </div>
 
-        <div class="taskbar-apps">
-            <!-- Open app icons will appear here -->
+            <div class="taskbar-status">
+                <span id="wifi-status">🛜</span>
+                <span id="battery-status">🔋 100%</span>
+                <span id="live-clock">12:00 PM</span>
+            </div>
         </div>
-
-        <div class="taskbar-status">
-            <span id="wifi-status">🛜</span>
-            <span id="battery-status">🔋 100%</span>
-            <span id="live-clock">12:00 PM</span>
-        </div>
-    </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>
