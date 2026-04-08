@@ -116,5 +116,51 @@ const WindowManager = {
         win.style.left = `${10 + offset}%`;
 
         desktop.appendChild(win);
+        
+        // Initialize dragging behavior
+        this.makeDraggable(win);
+    },
+
+    makeDraggable: function(win) {
+        const header = win.querySelector('.window-header');
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+
+        header.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            // Get current computed position
+            const rect = win.getBoundingClientRect();
+            initialX = rect.left;
+            initialY = rect.top;
+
+            // Change cursor
+            header.style.cursor = 'grabbing';
+            
+            // Prevent text selection while dragging
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            win.style.left = `${initialX + dx}px`;
+            win.style.top = `${initialY + dy}px`;
+            
+            // Remove % based positioning since we are dynamically setting px
+            win.style.transform = 'none'; 
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                header.style.cursor = 'move'; // fallback to standard move
+            }
+        });
     }
 };
