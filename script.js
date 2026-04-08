@@ -18,12 +18,15 @@ function initBootSequence() {
     ];
     let logIndex = 0;
 
+    // Simulate boot parsing
     const bootInterval = setInterval(() => {
+        // Randomly jump progress to look 'real'
         progress += Math.random() * 12;
         if (progress > 100) progress = 100;
         
         loadingBar.style.width = `${progress}%`;
 
+        // Update the log text at certain progress markers
         if (progress > 20 && logIndex === 0) { logIndex++; bootText.innerText = bootLogs[logIndex]; }
         if (progress > 45 && logIndex === 1) { logIndex++; bootText.innerText = bootLogs[logIndex]; }
         if (progress > 75 && logIndex === 2) { logIndex++; bootText.innerText = bootLogs[logIndex]; }
@@ -35,7 +38,21 @@ function initBootSequence() {
             
             setTimeout(() => {
                 bootScreen.classList.add('hidden');
+                
+                // Show login screen
+                const loginScreen = document.getElementById('login-screen');
+                if (loginScreen) {
+                    loginScreen.classList.remove('hidden');
+                }
             }, 800);
         }
     }, 400); 
+
+    // Setup Login Button
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            document.getElementById('login-screen').classList.add('hidden');
+        });
+    }
 }
