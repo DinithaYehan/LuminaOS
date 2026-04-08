@@ -85,3 +85,36 @@ function initClock() {
     updateTime();
     setInterval(updateTime, 60000); 
 }
+
+// ===== Window Manager Core =====
+const WindowManager = {
+    createWindow: function(title, id) {
+        if (document.getElementById(id)) return;
+
+        const desktop = document.getElementById('desktop');
+        
+        const win = document.createElement('div');
+        win.className = 'os-window glass-panel';
+        win.id = id;
+        
+        win.innerHTML = `
+            <div class="window-header">
+                <span class="window-title">${title}</span>
+                <div class="window-controls">
+                    <button class="control-btn btn-min"></button>
+                    <button class="control-btn btn-max"></button>
+                    <button class="control-btn btn-close" onclick="document.getElementById('${id}').remove()"></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <p>Welcome to ${title}. App content goes here!</p>
+            </div>
+        `;
+        
+        const offset = Math.floor(Math.random() * 40);
+        win.style.top = `${10 + offset}%`;
+        win.style.left = `${10 + offset}%`;
+
+        desktop.appendChild(win);
+    }
+};
