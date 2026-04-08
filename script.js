@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("LuminaOS boot sequence initiated.");
     initBootSequence();
+    initClock();
 });
 
 function initBootSequence() {
@@ -53,6 +54,34 @@ function initBootSequence() {
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             document.getElementById('login-screen').classList.add('hidden');
+            
+            // Reveal Desktop!
+            const desktop = document.getElementById('desktop');
+            if (desktop) {
+                desktop.classList.remove('hidden');
+            }
         });
     }
+}
+
+function initClock() {
+    const clockElement = document.getElementById('live-clock');
+    if (!clockElement) return;
+    
+    function updateTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        hours = hours % 12;
+        hours = hours ? hours : 12; // '0' becomes '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        
+        clockElement.innerText = `${hours}:${minutes} ${ampm}`;
+    }
+    
+    // Set immediate time, then tick every minute
+    updateTime();
+    setInterval(updateTime, 60000); 
 }
