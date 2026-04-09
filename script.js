@@ -75,21 +75,26 @@ function initClock() {
         const ampm = hours >= 12 ? 'PM' : 'AM';
         
         hours = hours % 12;
-        hours = hours ? hours : 12; // '0' becomes '12'
+        hours = hours ? hours : 12; 
         minutes = minutes < 10 ? '0' + minutes : minutes;
         
         clockElement.innerText = `${hours}:${minutes} ${ampm}`;
     }
     
-    // Set immediate time, then tick every minute
+    
     updateTime();
     setInterval(updateTime, 60000); 
 }
 
 // ===== Window Manager Core =====
 const WindowManager = {
+    highestZIndex: 100,
+
     createWindow: function(title, id) {
-        if (document.getElementById(id)) return;
+        if (document.getElementById(id)) {
+            this.focusWindow(document.getElementById(id));
+            return;
+        }
 
         const desktop = document.getElementById('desktop');
         
@@ -101,8 +106,8 @@ const WindowManager = {
             <div class="window-header">
                 <span class="window-title">${title}</span>
                 <div class="window-controls">
-                    <button class="control-btn btn-min"></button>
-                    <button class="control-btn btn-max"></button>
+                    <button class="control-btn btn-min" onclick="WindowManager.toggleMin('${id}')"></button>
+                    <button class="control-btn btn-max" onclick="WindowManager.toggleMax('${id}')"></button>
                     <button class="control-btn btn-close" onclick="document.getElementById('${id}').remove()"></button>
                 </div>
             </div>
@@ -117,8 +122,27 @@ const WindowManager = {
 
         desktop.appendChild(win);
         
-        // Initialize dragging behavior
+        // Initialize behavior
         this.makeDraggable(win);
+        this.focusWindow(win);
+
+        // Add click-to-focus
+        win.addEventListener('mousedown', () => this.focusWindow(win));
+    },
+
+    focusWindow: function(win) {
+        this.highestZIndex += 1;
+        win.style.zIndex = this.highestZIndex;
+    },
+
+    toggleMax: function(id) {
+        const win = document.getElementById(id);
+        win.classList.toggle('window-maximized');
+    },
+
+    toggleMin: function(id) {
+        const win = document.getElementById(id);
+        win.classList.toggle('window-minimized');
     },
 
     makeDraggable: function(win) {
@@ -127,19 +151,17 @@ const WindowManager = {
         let startX, startY, initialX, initialY;
 
         header.addEventListener('mousedown', (e) => {
+            if (win.classList.contains('window-maximized')) return;
+
             isDragging = true;
             startX = e.clientX;
             startY = e.clientY;
             
-            // Get current computed position
             const rect = win.getBoundingClientRect();
             initialX = rect.left;
             initialY = rect.top;
 
-            // Change cursor
             header.style.cursor = 'grabbing';
-            
-            // Prevent text selection while dragging
             e.preventDefault();
         });
 
@@ -152,14 +174,13 @@ const WindowManager = {
             win.style.left = `${initialX + dx}px`;
             win.style.top = `${initialY + dy}px`;
             
-            // Remove % based positioning since we are dynamically setting px
             win.style.transform = 'none'; 
         });
 
         document.addEventListener('mouseup', () => {
             if (isDragging) {
                 isDragging = false;
-                header.style.cursor = 'move'; // fallback to standard move
+                header.style.cursor = 'move';
             }
         });
     }
