@@ -81,7 +81,6 @@ function initClock() {
         clockElement.innerText = `${hours}:${minutes} ${ampm}`;
     }
     
-    
     updateTime();
     setInterval(updateTime, 60000); 
 }
@@ -92,6 +91,7 @@ const WindowManager = {
 
     createWindow: function(title, id) {
         if (document.getElementById(id)) {
+            // If already open, just bring it to front
             this.focusWindow(document.getElementById(id));
             return;
         }
@@ -102,6 +102,24 @@ const WindowManager = {
         win.className = 'os-window glass-panel';
         win.id = id;
         
+        let appContent = `<p>Welcome to ${title}. App content goes here!</p>`;
+
+        // App-specific HTML injection
+        if (id === 'app-terminal') {
+            appContent = `
+                <div class="terminal-container" id="terminal-wrapper" onclick="document.getElementById('term-input').focus()">
+                    <div id="terminal-output">
+                        <div>Welcome to LuminaOS Terminal v1.0.0</div>
+                        <div>Type 'help' for a list of available commands.</div>
+                    </div>
+                    <div class="terminal-input-line">
+                        <span class="prompt">guest@lumina:~$</span>
+                        <input type="text" id="term-input" autocomplete="off" spellcheck="false">
+                    </div>
+                </div>
+            `;
+        }
+
         win.innerHTML = `
             <div class="window-header">
                 <span class="window-title">${title}</span>
@@ -111,8 +129,8 @@ const WindowManager = {
                     <button class="control-btn btn-close" onclick="document.getElementById('${id}').remove()"></button>
                 </div>
             </div>
-            <div class="window-content">
-                <p>Welcome to ${title}. App content goes here!</p>
+            <div class="window-content" style="padding: 0;"> <!-- Remove padding for full-bleed apps -->
+                ${appContent}
             </div>
         `;
         
@@ -128,6 +146,61 @@ const WindowManager = {
 
         // Add click-to-focus
         win.addEventListener('mousedown', () => this.focusWindow(win));
+
+        // Initialize specific app logic
+        if (id === 'app-terminal') {
+            this.initTerminal();
+            // Auto focus the input when spawned
+            setTimeout(() => document.getElementById('term-input').focus(), 100);
+        }
+    },
+
+    initTerminal: function() {
+        const input = document.getElementById('term-input');
+        const output = document.getElementById('terminal-output');
+        const wrapper = document.getElementById('terminal-wrapper');
+
+        if (!input) return;
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const command = input.value.trim().toLowerCase();
+                
+                // Echo the prompt + command
+                const echo = document.createElement('div');
+                echo.innerHTML = `<span class="prompt">guest@lumina:~$</span> ${input.value}`;
+                output.appendChild(echo);
+
+                // Handle commands
+                const response = document.createElement('div');
+                if (command === 'help') {
+                    response.innerHTML = `Available commands:<br>- whoami: Print user information<br>- skills: List technical stack<br>- projects: View portfolio<br>- clear: Clear the terminal screen`;
+                } else if (command === 'whoami') {
+                    response.innerHTML = `Guest User. Aspiring Developer. Hacker.`;
+                } else if (command === 'skills') {
+                    response.innerHTML = `HTML5, CSS3, JavaScript (ES6+), WebOS Architecture.`;
+                } else if (command === 'projects') {
+                    response.innerHTML = `1. LuminaOS - A web-based operating system.<br>2. Astrodestroyer - A retro arcade game.`;
+                } else if (command === 'clear') {
+                    output.innerHTML = '';
+                    response.innerHTML = ''; // Don't print anything
+                } else if (command === '') {
+                    response.innerHTML = '';
+                } else {
+                    response.innerHTML = `Command not found: ${command}. Type 'help' for a list of commands.`;
+                }
+
+                if (response.innerHTML !== '') {
+                    output.appendChild(response);
+                }
+
+                // Scroll to bottom
+                wrapper.scrollTop = wrapper.scrollHeight;
+                
+                // Clear input
+                input.value = '';
+            }
+        });
     },
 
     focusWindow: function(win) {
