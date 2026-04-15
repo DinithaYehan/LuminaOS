@@ -75,12 +75,13 @@ function initClock() {
         const ampm = hours >= 12 ? 'PM' : 'AM';
         
         hours = hours % 12;
-        hours = hours ? hours : 12; 
+        hours = hours ? hours : 12; // '0' becomes '12'
         minutes = minutes < 10 ? '0' + minutes : minutes;
         
         clockElement.innerText = `${hours}:${minutes} ${ampm}`;
     }
     
+    // Set immediate time, then tick every minute
     updateTime();
     setInterval(updateTime, 60000); 
 }
@@ -118,6 +119,39 @@ const WindowManager = {
                     </div>
                 </div>
             `;
+        } else if (id === 'app-calc') {
+            appContent = `
+                <div class="calc-container">
+                    <div class="calc-screen">
+                        <div class="calc-prev" id="calc-prev"></div>
+                        <div class="calc-current" id="calc-current">0</div>
+                    </div>
+                    <div class="calc-grid">
+                        <button class="calc-btn op-btn calc-span-2" onclick="WindowManager.calcClear()">AC</button>
+                        <button class="calc-btn op-btn" onclick="WindowManager.calcDel()">DEL</button>
+                        <button class="calc-btn op-btn" onclick="WindowManager.calcOp('/')">÷</button>
+                        
+                        <button class="calc-btn" onclick="WindowManager.calcNum('7')">7</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('8')">8</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('9')">9</button>
+                        <button class="calc-btn op-btn" onclick="WindowManager.calcOp('*')">×</button>
+                        
+                        <button class="calc-btn" onclick="WindowManager.calcNum('4')">4</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('5')">5</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('6')">6</button>
+                        <button class="calc-btn op-btn" onclick="WindowManager.calcOp('-')">-</button>
+                        
+                        <button class="calc-btn" onclick="WindowManager.calcNum('1')">1</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('2')">2</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('3')">3</button>
+                        <button class="calc-btn op-btn" onclick="WindowManager.calcOp('+')">+</button>
+                        
+                        <button class="calc-btn calc-span-2" onclick="WindowManager.calcNum('0')">0</button>
+                        <button class="calc-btn" onclick="WindowManager.calcNum('.')">.</button>
+                        <button class="calc-btn equal-btn" onclick="WindowManager.calcEqual()">=</button>
+                    </div>
+                </div>
+            `;
         }
 
         win.innerHTML = `
@@ -152,7 +186,84 @@ const WindowManager = {
             this.initTerminal();
             // Auto focus the input when spawned
             setTimeout(() => document.getElementById('term-input').focus(), 100);
+        } else if (id === 'app-calc') {
+            this.calcCurrent = '0';
+            this.calcPrevious = '';
+            this.calcOperation = undefined;
         }
+    },
+
+    // ===== Calculator Logic =====
+    calcCurrent: '0',
+    calcPrevious: '',
+    calcOperation: undefined,
+
+    updateCalcDisplay: function() {
+        const curEl = document.getElementById('calc-current');
+        const prevEl = document.getElementById('calc-prev');
+        if (curEl) curEl.innerText = this.calcCurrent;
+        if (prevEl) {
+            if (this.calcOperation != null) {
+                prevEl.innerText = `${this.calcPrevious} ${this.calcOperation}`;
+            } else {
+                prevEl.innerText = '';
+            }
+        }
+    },
+
+    calcNum: function(num) {
+        if (num === '.' && this.calcCurrent.includes('.')) return;
+        if (this.calcCurrent === '0' && num !== '.') {
+            this.calcCurrent = num;
+        } else {
+            this.calcCurrent = this.calcCurrent.toString() + num.toString();
+        }
+        this.updateCalcDisplay();
+    },
+
+    calcOp: function(op) {
+        if (this.calcCurrent === '') return;
+        if (this.calcPrevious !== '') {
+            this.calcEqual();
+        }
+        this.calcOperation = op;
+        this.calcPrevious = this.calcCurrent;
+        this.calcCurrent = '';
+        this.updateCalcDisplay();
+    },
+
+    calcEqual: function() {
+        let computation;
+        const prev = parseFloat(this.calcPrevious);
+        const current = parseFloat(this.calcCurrent);
+        if (isNaN(prev) || isNaN(current)) return;
+        
+        switch (this.calcOperation) {
+            case '+': computation = prev + current; break;
+            case '-': computation = prev - current; break;
+            case '*': computation = prev * current; break;
+            case '/': computation = prev / current; break;
+            default: return;
+        }
+        
+        this.calcCurrent = computation.toString();
+        this.calcOperation = undefined;
+        this.calcPrevious = '';
+        this.updateCalcDisplay();
+    },
+
+    calcClear: function() {
+        this.calcCurrent = '0';
+        this.calcPrevious = '';
+        this.calcOperation = undefined;
+        this.updateCalcDisplay();
+    },
+
+    calcDel: function() {
+        if (this.calcCurrent === '0' || this.calcCurrent === '') return;
+        this.calcCurrent = this.calcCurrent.toString().slice(0, -1);
+        if (this.calcCurrent === '') this.calcCurrent = '0';
+        this.updateCalcDisplay();
     },
 
     initTerminal: function() {
@@ -224,6 +335,7 @@ const WindowManager = {
         let startX, startY, initialX, initialY;
 
         header.addEventListener('mousedown', (e) => {
+            // Don't drag if maximized
             if (win.classList.contains('window-maximized')) return;
 
             isDragging = true;
