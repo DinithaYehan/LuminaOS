@@ -358,13 +358,53 @@ body, html {
     height: calc(100vh - 80px) !important; /* leaves room for taskbar */
     border-radius: 0 !important;
     transform: none !important;
+    transition: all 0.3s ease;
+}
+
+.os-window {
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .window-minimized {
-    height: 40px !important; /* Only shows header */
+    transform: scale(0.2) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
-.window-minimized .window-content {
-    opacity: 0;
+
+/* ===== Taskbar App Entries ===== */
+.taskbar-app-entry {
+    font-size: 1.2rem;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.taskbar-app-entry::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    opacity: 0.4;
+    transition: all 0.2s ease;
+}
+
+.taskbar-app-entry.taskbar-active::after {
+    opacity: 1;
+    background: #2b6cb0;
+    width: 6px;
+    height: 6px;
+}
+
+.taskbar-app-entry.taskbar-minimized {
+    opacity: 0.5;
+}
+
+.taskbar-app-entry.taskbar-minimized::after {
+    opacity: 0.3;
 }
 
 /* ===== Terminal App ===== */
