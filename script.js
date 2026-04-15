@@ -89,11 +89,23 @@ function initClock() {
 // ===== Window Manager Core =====
 const WindowManager = {
     highestZIndex: 100,
+    // Track open windows: { id: { title, emoji, isMinimized, isMaximized, preMaxRect } }
+    openWindows: {},
+
+    // Map app IDs to emojis for taskbar display
+    appEmojis: {
+        'app-terminal': '💻',
+        'app-calc': '🧮'
+    },
 
     createWindow: function(title, id) {
         if (document.getElementById(id)) {
-            // If already open, just bring it to front
-            this.focusWindow(document.getElementById(id));
+            // If already open, restore if minimized, or just focus
+            if (this.openWindows[id] && this.openWindows[id].isMinimized) {
+                this.restoreWindow(id);
+            } else {
+                this.focusWindow(document.getElementById(id));
+            }
             return;
         }
 
@@ -158,9 +170,9 @@ const WindowManager = {
             <div class="window-header">
                 <span class="window-title">${title}</span>
                 <div class="window-controls">
-                    <button class="control-btn btn-min" onclick="WindowManager.toggleMin('${id}')"></button>
+                    <button class="control-btn btn-min" onclick="WindowManager.minimizeWindow('${id}')"></button>
                     <button class="control-btn btn-max" onclick="WindowManager.toggleMax('${id}')"></button>
-                    <button class="control-btn btn-close" onclick="document.getElementById('${id}').remove()"></button>
+                    <button class="control-btn btn-close" onclick="WindowManager.closeWindow('${id}')"></button>
                 </div>
             </div>
             <div class="window-content" style="padding: 0;"> <!-- Remove padding for full-bleed apps -->
@@ -174,12 +186,24 @@ const WindowManager = {
 
         desktop.appendChild(win);
         
+        // Register window in tracker
+        this.openWindows[id] = {
+            title: title,
+            emoji: this.appEmojis[id] || '📄',
+            isMinimized: false,
+            isMaximized: false,
+            preMaxRect: null // stores { top, left, width, height } before maximize
+        };
+
         // Initialize behavior
         this.makeDraggable(win);
         this.focusWindow(win);
 
         // Add click-to-focus
         win.addEventListener('mousedown', () => this.focusWindow(win));
+
+        // Add taskbar entry
+        this.addTaskbarEntry(id, title);
 
         // Initialize specific app logic
         if (id === 'app-terminal') {
@@ -314,19 +338,115 @@ const WindowManager = {
         });
     },
 
+    // ===== Taskbar Management =====
+    addTaskbarEntry: function(id, title) {
+        const taskbarApps = document.querySelector('.taskbar-apps');
+        if (!taskbarApps || document.getElementById('taskbar-' + id)) return;
+
+        const entry = document.createElement('div');
+        entry.className = 'taskbar-app-entry glass-icon';
+        entry.id = 'taskbar-' + id;
+        entry.title = title;
+        entry.innerHTML = this.appEmojis[id] || '📄';
+        entry.addEventListener('click', () => {
+            const state = this.openWindows[id];
+            if (!state) return;
+            if (state.isMinimized) {
+                this.restoreWindow(id);
+            } else {
+                // If already visible, focus it
+                const win = document.getElementById(id);
+                if (win) this.focusWindow(win);
+            }
+        });
+        taskbarApps.appendChild(entry);
+    },
+
+    removeTaskbarEntry: function(id) {
+        const entry = document.getElementById('taskbar-' + id);
+        if (entry) entry.remove();
+    },
+
+    updateTaskbarEntry: function(id) {
+        const entry = document.getElementById('taskbar-' + id);
+        if (!entry) return;
+        const state = this.openWindows[id];
+        if (state && state.isMinimized) {
+            entry.classList.add('taskbar-minimized');
+        } else {
+            entry.classList.remove('taskbar-minimized');
+        }
+    },
+
+    // ===== Window State Management =====
     focusWindow: function(win) {
         this.highestZIndex += 1;
         win.style.zIndex = this.highestZIndex;
+        // Mark active in taskbar
+        document.querySelectorAll('.taskbar-app-entry').forEach(e => e.classList.remove('taskbar-active'));
+        const entry = document.getElementById('taskbar-' + win.id);
+        if (entry) entry.classList.add('taskbar-active');
+    },
+
+    minimizeWindow: function(id) {
+        const win = document.getElementById(id);
+        const state = this.openWindows[id];
+        if (!win || !state) return;
+
+        state.isMinimized = true;
+        win.classList.add('window-minimized');
+        this.updateTaskbarEntry(id);
+    },
+
+    restoreWindow: function(id) {
+        const win = document.getElementById(id);
+        const state = this.openWindows[id];
+        if (!win || !state) return;
+
+        state.isMinimized = false;
+        win.classList.remove('window-minimized');
+        this.focusWindow(win);
+        this.updateTaskbarEntry(id);
     },
 
     toggleMax: function(id) {
         const win = document.getElementById(id);
-        win.classList.toggle('window-maximized');
+        const state = this.openWindows[id];
+        if (!win || !state) return;
+
+        // If minimized, restore first
+        if (state.isMinimized) {
+            this.restoreWindow(id);
+        }
+
+        if (!state.isMaximized) {
+            // Save current position/size before maximizing
+            state.preMaxRect = {
+                top: win.style.top,
+                left: win.style.left,
+                width: win.style.width,
+                height: win.style.height
+            };
+            win.classList.add('window-maximized');
+            state.isMaximized = true;
+        } else {
+            // Restore saved position/size
+            win.classList.remove('window-maximized');
+            if (state.preMaxRect) {
+                win.style.top = state.preMaxRect.top;
+                win.style.left = state.preMaxRect.left;
+                win.style.width = state.preMaxRect.width;
+                win.style.height = state.preMaxRect.height;
+            }
+            state.isMaximized = false;
+        }
     },
 
-    toggleMin: function(id) {
+    closeWindow: function(id) {
         const win = document.getElementById(id);
-        win.classList.toggle('window-minimized');
+        if (win) win.remove();
+        this.removeTaskbarEntry(id);
+        delete this.openWindows[id];
     },
 
     makeDraggable: function(win) {
