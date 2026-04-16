@@ -6,6 +6,8 @@
     <title>LuminaOS | WebOS</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- App Modules -->
+    <link rel="stylesheet" href="apps/filemanager.css">
 </head>
 <body>
     
@@ -48,6 +50,10 @@
                 <div class="icon-img glass-panel">🧮</div>
                 <span class="icon-label">Calc</span>
             </div>
+            <div class="desktop-icon" onclick="WindowManager.createWindow('Files', 'app-files')">
+                <div class="icon-img glass-panel">📁</div>
+                <span class="icon-label">Files</span>
+            </div>
         </div>
 
         <div id="taskbar" class="glass-panel">
@@ -68,5 +74,7 @@
     </div>
 
     <script src="script.js"></script>
+    <!-- App Modules -->
+    <script src="apps/filemanager.js"></script>
 </body>
 </html>
