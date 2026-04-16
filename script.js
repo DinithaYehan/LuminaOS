@@ -92,6 +92,17 @@ const WindowManager = {
     // Track open windows: { id: { title, emoji, isMinimized, isMaximized, preMaxRect } }
     openWindows: {},
 
+    // App registry: external modules register here via WindowManager.registerApp()
+    // Format: { 'app-id': { content: function(id), init: function(id), emoji: '🎯' } }
+    appRegistry: {},
+
+    registerApp: function(id, config) {
+        this.appRegistry[id] = config;
+        if (config.emoji) {
+            this.appEmojis[id] = config.emoji;
+        }
+    },
+
     // Map app IDs to emojis for taskbar display
     appEmojis: {
         'app-terminal': '💻',
@@ -117,8 +128,12 @@ const WindowManager = {
         
         let appContent = `<p>Welcome to ${title}. App content goes here!</p>`;
 
-        // App-specific HTML injection
-        if (id === 'app-terminal') {
+        // Check app registry first (modular apps)
+        if (this.appRegistry[id] && this.appRegistry[id].content) {
+            appContent = this.appRegistry[id].content(id);
+        }
+        // Legacy app-specific HTML injection
+        else if (id === 'app-terminal') {
             appContent = `
                 <div class="terminal-container" id="terminal-wrapper" onclick="document.getElementById('term-input').focus()">
                     <div id="terminal-output">
@@ -184,6 +199,14 @@ const WindowManager = {
         win.style.top = `${10 + offset}%`;
         win.style.left = `${10 + offset}%`;
 
+        // Apply custom window size from registry
+        if (this.appRegistry[id] && this.appRegistry[id].width) {
+            win.style.width = this.appRegistry[id].width;
+        }
+        if (this.appRegistry[id] && this.appRegistry[id].height) {
+            win.style.height = this.appRegistry[id].height;
+        }
+
         desktop.appendChild(win);
         
         // Register window in tracker
@@ -206,7 +229,9 @@ const WindowManager = {
         this.addTaskbarEntry(id, title);
 
         // Initialize specific app logic
-        if (id === 'app-terminal') {
+        if (this.appRegistry[id] && this.appRegistry[id].init) {
+            this.appRegistry[id].init(id);
+        } else if (id === 'app-terminal') {
             this.initTerminal();
             // Auto focus the input when spawned
             setTimeout(() => document.getElementById('term-input').focus(), 100);
