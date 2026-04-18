@@ -1,0 +1,489 @@
+/* ===== Settings App ===== */
+
+.st-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    font-family: var(--font-main);
+    overflow: hidden;
+}
+
+/* --- Sidebar --- */
+.st-sidebar {
+    width: 170px;
+    min-width: 170px;
+    background: rgba(0, 0, 0, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.st-sidebar-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    opacity: 0.5;
+    padding: 0.5rem 1rem 0.6rem;
+}
+
+.st-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.st-sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.st-sidebar-item span:first-child {
+    font-size: 1rem;
+}
+
+.st-sidebar-active {
+    background: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+/* --- Main Content --- */
+.st-main {
+    flex-grow: 1;
+    padding: 1.25rem 1.5rem;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* --- Sections --- */
+.st-section {
+    margin-bottom: 1.5rem;
+}
+
+.st-section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+
+.st-section-desc {
+    font-size: 0.78rem;
+    color: var(--text-primary);
+    opacity: 0.55;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+/* --- Accent Color Swatches --- */
+.st-swatch-grid {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.st-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.st-swatch:hover {
+    transform: scale(1.15);
+}
+
+.st-swatch-active {
+    border-color: var(--text-primary);
+    transform: scale(1.1);
+}
+
+/* --- Row Layouts --- */
+.st-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.st-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.st-sublabel {
+    font-size: 0.72rem;
+    color: var(--text-primary);
+    opacity: 0.5;
+}
+
+.st-color-input {
+    width: 36px;
+    height: 30px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+}
+
+.st-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.st-color-input::-webkit-color-swatch {
+    border: 2px solid rgba(255,255,255,0.6);
+    border-radius: 6px;
+}
+
+/* --- Toggle Switch --- */
+.st-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+}
+
+.st-toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.st-toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.st-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.st-toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.st-toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 3px;
+    left: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.st-toggle input:checked + .st-toggle-slider {
+    background: var(--accent-color, #2b6cb0);
+}
+
+.st-toggle input:checked + .st-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* --- Wallpaper Grid --- */
+.st-wp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+}
+
+.st-wp-card {
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.st-wp-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.st-wp-active {
+    border-color: var(--accent-color, #2b6cb0);
+    box-shadow: 0 0 0 1px var(--accent-color, #2b6cb0);
+}
+
+.st-wp-preview {
+    height: 60px;
+    width: 100%;
+}
+
+.st-wp-name {
+    font-size: 0.68rem;
+    padding: 0.3rem 0.4rem;
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: 500;
+    background: rgba(255,255,255,0.3);
+}
+
+.st-wp-check {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    background: var(--accent-color, #2b6cb0);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+/* --- Profile Section --- */
+.st-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.5rem 0;
+}
+
+.st-profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.7);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.st-profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.st-profile-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.st-profile-role {
+    font-size: 0.78rem;
+    color: var(--text-primary);
+    opacity: 0.55;
+}
+
+.st-input-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.st-text-input {
+    flex-grow: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: border 0.2s ease;
+}
+
+.st-text-input:focus {
+    border-color: var(--accent-color, #2b6cb0);
+}
+
+.st-btn-primary {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent-color, #2b6cb0);
+    color: white;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.st-btn-primary:hover {
+    filter: brightness(0.85);
+    transform: translateY(-1px);
+}
+
+/* --- About Section --- */
+.st-about-banner {
+    text-align: center;
+    padding: 1.5rem 1rem 1rem;
+}
+
+.st-about-logo {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+.st-about-version {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+    background: rgba(0,0,0,0.06);
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+    color: var(--text-primary);
+    opacity: 0.6;
+}
+
+.st-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+}
+
+.st-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.st-info-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-primary);
+    opacity: 0.5;
+    font-weight: 600;
+}
+
+.st-info-value {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.st-btn-danger {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background: #dc2626;
+    color: white;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.st-btn-danger:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
+/* --- Dark Mode Overrides --- */
+body.dark-mode .glass-panel {
+    background: rgba(20, 20, 35, 0.55);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode .window-content {
+    background: rgba(15, 15, 30, 0.65);
+}
+
+body.dark-mode .window-header {
+    background: rgba(20, 20, 40, 0.4);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .overlay {
+    background-color: rgba(10, 10, 20, 0.95);
+}
+
+body.dark-mode .st-text-input {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+}
+
+body.dark-mode .st-info-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .st-wp-name {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .fm-container,
+body.dark-mode .calc-container {
+    background-color: rgba(15, 15, 30, 0.5);
+}
+
+body.dark-mode .calc-btn {
+    background-color: rgba(30, 30, 50, 0.6);
+    color: #e2e8f0;
+}
+
+body.dark-mode .calc-screen {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .fm-sidebar {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .fm-toolbar {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .fm-main {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode .st-sidebar {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .st-main {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* --- No Animations Mode --- */
+body.no-animations *,
+body.no-animations *::before,
+body.no-animations *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+}
