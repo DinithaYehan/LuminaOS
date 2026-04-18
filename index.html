@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <!-- App Modules -->
     <link rel="stylesheet" href="apps/filemanager.css">
+    <link rel="stylesheet" href="apps/settings.css">
 </head>
 <body>
     
@@ -54,6 +55,10 @@
                 <div class="icon-img glass-panel">📁</div>
                 <span class="icon-label">Files</span>
             </div>
+            <div class="desktop-icon" onclick="WindowManager.createWindow('Settings', 'app-settings')">
+                <div class="icon-img glass-panel">⚙️</div>
+                <span class="icon-label">Settings</span>
+            </div>
         </div>
 
         <div id="taskbar" class="glass-panel">
@@ -76,5 +81,6 @@
     <script src="script.js"></script>
     <!-- App Modules -->
     <script src="apps/filemanager.js"></script>
+    <script src="apps/settings.js"></script>
 </body>
 </html>
